@@ -14,6 +14,8 @@ export function ProductList({ products }) {
           </li>
         ))}
       </ul>
+      
     </div>
   );
 }
+

@@ -12,19 +12,23 @@ function App() {
   const [busqueda, setBusqueda] = useState("");
   const [show, setShow] = useState(true);
   const [theme, setTheme] = useState(false);
+  const [page, setPage] = useState (1)
+  const [total, setTotal] = useState(0);
 
   /*REFERENCIAS*/
 
   const containerRef = useRef(null);
+  const limite = 12
 
   /*DATOS*/
 
   useEffect(() => {
-    axios.get("https://dummyjson.com/products?limit=100")
+    axios.get(`https://dummyjson.com/products?limit=${limite}&skip=${(page-1)*limite}`)
       .then((res) => {
         setProducts(res.data.products);
+        setTotal(res.data.total);
       });
-  }, []);
+  }, [page]);
 
   /* FILTRO*/
 
@@ -84,6 +88,16 @@ function App() {
         />)}
 
         <ProductList products={filteredProducts} />
+
+        <button 
+          disabled={page === 1} 
+          onClick={ () => setPage(page - 1)}
+          >ANTERIOR</button> 
+        {page} 
+          <button 
+            disabled={page * limite >= total}
+            onClick={ () => setPage(page + 1)}>SIGUIENTE</button>
+        
       
     </div>
   );

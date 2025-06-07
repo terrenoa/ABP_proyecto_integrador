@@ -15,6 +15,7 @@ function App() {
   /*const [page, setPage] = useState (1)*/ /* se usaba para la paginacio*/
   /*const [total, setTotal] = useState(0);*/ /* se usaba para la paginacio*/
   const [categorias, setCategorias] = useState([]);
+  const [orden, setOrden] = useState("");
 
   /*REFERENCIAS*/
 
@@ -46,6 +47,23 @@ function App() {
   const filteredProducts = products
     .filter (p => p.title.toLowerCase().includes(busqueda.toLowerCase()))
     .filter (p => categoriaSeleccionada === "" || p.category === categoriaSeleccionada);
+  
+  /* orden*/
+
+  const productosOrdenados = [...filteredProducts].sort((a, b) => {
+    switch (orden) {
+      case "precio-asc":
+        return a.price - b.price;
+      case "precio-desc":
+        return b.price - a.price;
+      case "rating-asc":
+        return a.rating - b.rating;
+      case "rating-desc":
+        return b.rating - a.rating;
+      default:
+        return 0;
+    }
+  });
 
 
 
@@ -59,6 +77,8 @@ function App() {
   const avgRating = filteredProducts.length > 0
     ? (filteredProducts.reduce((acumulador, p) => acumulador + p.rating, 0) / filteredProducts.length).toFixed(2)
     : 0;
+  const stockMayor50 = filteredProducts.filter(p => p.stock >= 50).length;
+  const ratingMayor45 = filteredProducts.filter(p => p.rating >= 4.5).length;
 
   /* TEMA */
   const toggleModoOscuro = () => {
@@ -87,16 +107,34 @@ function App() {
             onChange={(e) => setBusqueda(e.target.value)}
             className="border p-2 w-full max-w-md"
           />
+
         </div>
 
-        <select className="mt-2" onChange={(e) => setCategoriaSeleccionada(e.target.value)}>
-          <option value="">Todas</option>
-          {categorias.map((categoria) => (
-            <option key={categoria} value={categoria}>
-              {categoria}
-            </option>
-          ))}
-        </select>
+        <div className="mt-2">
+          <p>Categoria</p>
+
+          <select className="mt-2" onChange={(e) => setCategoriaSeleccionada(e.target.value)}>
+            <option value="">Todas</option>
+            {categorias.map((categoria) => (
+              <option key={categoria} value={categoria}>
+                {categoria}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mt-2">
+          <p>Ordenar por</p>
+
+          <select className="mt-2" onChange={(e) => setOrden(e.target.value)}>
+            <option value="">No ordenar</option>
+            <option value="precio-asc">Precio (menor a mayor)</option>
+            <option value="precio-desc">Precio (mayor a menor)</option>
+            <option value="rating-asc">Rating (menor a mayor)</option>
+            <option value="rating-desc">Rating (mayor a menor)</option>
+          </select>
+        </div>
+
 
         <div className="mt-2">
           <button onClick={() => setShow(!show)}>{show ? "OCULTAR ESTADISTICAS" : "MOSTRAR ESTADISTICAS"}</button>
@@ -109,9 +147,11 @@ function App() {
           discProduct={discProduct}
           tituloVeinte={tituloVeinte}
           avgRating={avgRating}
+          stockMayor50={stockMayor50}
+          ratingMayor45={ratingMayor45}
         />)}
 
-        <ProductList products={filteredProducts} />
+        <ProductList products={productosOrdenados} />
 
         {/*<button 
           disabled={page === 1} 

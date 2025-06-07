@@ -1,3 +1,4 @@
+/*
 export function StatsPanel({
   totalProducts,
   maxProduct,
@@ -18,3 +19,21 @@ export function StatsPanel({
     </div>
   );
 }
+*/
+
+function StatsPanel(props){
+  return (
+    <div>
+      <h2 className="text-lg font-semibold mb-1">Estadísticas</h2>
+      <p>Se muestran {props.totalProducts} productos</p>
+      <p>Precio mas alto: ${props.maxProduct}</p>
+      <p>Mejor precio: ${props.minProduct}</p>
+      <p>Precio descuento: ${props.discProduct}</p>
+      <p>Productos con título mayor a 20 caracteres: {props.tituloVeinte}</p>
+      <p>Promedio de puntaje: {props.avgRating}★</p>
+    </div>
+  ); 
+
+}
+
+export default StatsPanel

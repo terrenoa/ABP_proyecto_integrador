@@ -1,12 +1,13 @@
 import './App.css';
 import axios from "axios";
 import { useEffect, useState } from 'react';
-import { StatsPanel } from "./StatsPanel";
+import StatsPanel from './StatsPanel';
 import { ProductList } from "./ProductList";
 
 function App() {
   const [products, setProducts] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [show, setShow] = useState(true);
 
   useEffect(() => {
     axios.get("https://dummyjson.com/products?limit=100")
@@ -44,14 +45,16 @@ function App() {
         />
       </div>
 
-      <StatsPanel
+      <button onClick={() => setShow(!show)}>{show ? "OCULTAR ESTADISTICAS" : "MOSTRAR ESTADISTICAS"}</button>
+
+      { show && (<StatsPanel
         totalProducts={totalProducts}
         maxProduct={maxProduct}
         minProduct={minProduct}
         discProduct={discProduct}
         tituloVeinte={tituloVeinte}
         avgRating={avgRating}
-      />
+      />)}
 
       <ProductList products={filteredProducts} />
     </div>

@@ -1,13 +1,23 @@
 import './App.css';
 import axios from "axios";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import StatsPanel from './StatsPanel';
 import { ProductList } from "./ProductList";
 
 function App() {
+
+  /*ESTADOS*/
+
   const [products, setProducts] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [show, setShow] = useState(true);
+  const [theme, setTheme] = useState(false);
+
+  /*REFERENCIAS*/
+
+  const containerRef = useRef(null);
+
+  /*DATOS*/
 
   useEffect(() => {
     axios.get("https://dummyjson.com/products?limit=100")
@@ -16,9 +26,13 @@ function App() {
       });
   }, []);
 
+  /* FILTRO*/
+
   const filteredProducts = products.filter(p =>
     p.title.toLowerCase().includes(busqueda.toLowerCase())
   );
+
+  /* ESTADISITCAS*/
 
   const totalProducts = filteredProducts.length;
   const maxProduct = Math.max(...filteredProducts.map(p => p.price));
@@ -29,34 +43,48 @@ function App() {
     ? (filteredProducts.reduce((acumulador, p) => acumulador + p.rating, 0) / filteredProducts.length).toFixed(2)
     : 0;
 
+  /* TEMA */
+  const toggleModoOscuro = () => {
+    setTheme(!theme);
+    containerRef.current.classList.toggle("modo-oscuro");
+  }
+
+
   return (
-    <div className="p-4 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-blue-700">Evidencias 1 y 2</h1>
-      </div>
+    <div ref={containerRef} className="app">
 
-      <div>
-        <input
-          type="text"
-          placeholder="Buscar producto"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className="border p-2 w-full max-w-md"
-        />
-      </div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-blue-700">
+            PROYECTO ABP - Alejo N. Terreno
+          </h1>
+          <button onClick={toggleModoOscuro}>
+            MODO {theme ? "CLARO" : "OSCURO"}
+          </button>
+        </div>
 
-      <button onClick={() => setShow(!show)}>{show ? "OCULTAR ESTADISTICAS" : "MOSTRAR ESTADISTICAS"}</button>
+        <div>
+          <input
+            type="text"
+            placeholder="Buscar producto"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="border p-2 w-full max-w-md"
+          />
+        </div>
 
-      { show && (<StatsPanel
-        totalProducts={totalProducts}
-        maxProduct={maxProduct}
-        minProduct={minProduct}
-        discProduct={discProduct}
-        tituloVeinte={tituloVeinte}
-        avgRating={avgRating}
-      />)}
+        <button onClick={() => setShow(!show)}>{show ? "OCULTAR ESTADISTICAS" : "MOSTRAR ESTADISTICAS"}</button>
 
-      <ProductList products={filteredProducts} />
+        { show && (<StatsPanel
+          totalProducts={totalProducts}
+          maxProduct={maxProduct}
+          minProduct={minProduct}
+          discProduct={discProduct}
+          tituloVeinte={tituloVeinte}
+          avgRating={avgRating}
+        />)}
+
+        <ProductList products={filteredProducts} />
+      
     </div>
   );
 }

@@ -1,14 +1,12 @@
-import Recharts from "recharts";
 import './App.css';
 import axios from "axios";
 import { useEffect, useState, useRef } from 'react';
-import StatsPanel from './StatsPanel';
+import { StatsPanel, Graficos } from './StatsPanel';
 import { ProductList } from "./ProductList";
 
 function App() {
 
   /*ESTADOS*/
-
   const [products, setProducts] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [show, setShow] = useState(true);
@@ -19,29 +17,24 @@ function App() {
   const [orden, setOrden] = useState("");
 
   /*REFERENCIAS*/
-
   const containerRef = useRef(null);
   
 
   /*DATOS*/
-
   useEffect(() => {
-  axios.get(`https://dummyjson.com/products?limit=0`)
+  axios.get(`https://dummyjson.com/products?limit=50`)
     .then((res) => {
       setProducts(res.data.products);
     });
 
   axios.get(`https://dummyjson.com/products/category-list`)
     .then((res) => {
-      setCategorias(res.data); // <- esta línea estaba abierta
+      setCategorias(res.data); 
     });
     }, []);
 
-  console.log(categorias)
-
   /* FILTROS*/
   /*categoria*/
-
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
 
   /* nombre*/
@@ -50,7 +43,6 @@ function App() {
     .filter (p => categoriaSeleccionada === "" || p.category === categoriaSeleccionada);
   
   /* orden*/
-
   const productosOrdenados = [...filteredProducts].sort((a, b) => {
     switch (orden) {
       case "precio-asc":
@@ -69,7 +61,6 @@ function App() {
 
 
   /* ESTADISITCAS*/
-
   const totalProducts = filteredProducts.length;
   const maxProduct = Math.max(...filteredProducts.map(p => p.price));
   const minProduct = Math.min(...filteredProducts.map(p => p.price));
@@ -87,6 +78,25 @@ function App() {
     setTheme(!theme);
     containerRef.current.classList.toggle("modo-oscuro");
   }
+
+/*GRAFICOS*/
+
+const dataCategorias = Object.values(filteredProducts.reduce((acc, producto) => {const categoria = producto.category;
+  if (!acc[categoria]) {acc[categoria] = { categoria: categoria, cantidad: 0 };}
+  acc[categoria].cantidad += 1;
+  return acc;
+    }, {})
+    );
+
+const dataLineas = filteredProducts.slice(0, 15).map((producto, index) => ({dia: `Día ${index + 1}`,precio: producto.price}));
+
+const dataStock = filteredProducts
+  .sort((a, b) => b.stock - a.stock)
+  .slice(0, 5)
+  .map(p => ({nombre: p.title,valor: p.stock}));
+
+
+
 
 
   return (
@@ -153,6 +163,11 @@ function App() {
           ratingMayor45={ratingMayor45}
           avgPriceCategoria={avgPriceCategoria}
         />)}
+
+        <Graficos 
+          dataCategorias={dataCategorias}
+          dataLineas={dataLineas}
+          dataStock={dataStock} />
 
         <ProductList products={productosOrdenados} />
 

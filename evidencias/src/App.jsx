@@ -1,3 +1,4 @@
+import Recharts from "recharts";
 import './App.css';
 import axios from "axios";
 import { useEffect, useState, useRef } from 'react';
@@ -20,7 +21,7 @@ function App() {
   /*REFERENCIAS*/
 
   const containerRef = useRef(null);
-  const limite = 12
+  
 
   /*DATOS*/
 
@@ -79,6 +80,7 @@ function App() {
     : 0;
   const stockMayor50 = filteredProducts.filter(p => p.stock >= 50).length;
   const ratingMayor45 = filteredProducts.filter(p => p.rating >= 4.5).length;
+  const avgPriceCategoria = (filteredProducts.reduce((acc, p) => acc + p.price, 0) / filteredProducts.length).toFixed(2);
 
   /* TEMA */
   const toggleModoOscuro = () => {
@@ -149,6 +151,7 @@ function App() {
           avgRating={avgRating}
           stockMayor50={stockMayor50}
           ratingMayor45={ratingMayor45}
+          avgPriceCategoria={avgPriceCategoria}
         />)}
 
         <ProductList products={productosOrdenados} />

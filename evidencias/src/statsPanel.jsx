@@ -10,6 +10,7 @@ function StatsPanel(props){
       <p>Promedio de puntaje en la seleccion: {props.avgRating}★</p>
       <p>Productos con stock ≥ 50 en la seleccion: {props.stockMayor50}</p>
       <p>Productos con rating ≥ 4.5 en la seleccion: {props.ratingMayor45}</p>
+      <p>Precio promedio en la seleccion: ${props.avgPriceCategoria}</p>
     </div>
   ); 
 

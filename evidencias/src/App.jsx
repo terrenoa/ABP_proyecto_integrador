@@ -15,6 +15,7 @@ function App() {
   /*const [total, setTotal] = useState(0);*/ /* se usaba para la paginacio*/
   const [categorias, setCategorias] = useState([]);
   const [orden, setOrden] = useState("");
+  const [formato, setFormato] = useState ("");
 
   /*REFERENCIAS*/
   const containerRef = useRef(null);
@@ -22,7 +23,7 @@ function App() {
 
   /*DATOS*/
   useEffect(() => {
-  axios.get(`https://dummyjson.com/products?limit=50`)
+  axios.get(`https://dummyjson.com/products?limit=5`)
     .then((res) => {
       setProducts(res.data.products);
     });
@@ -95,7 +96,25 @@ const dataStock = filteredProducts
   .slice(0, 5)
   .map(p => ({nombre: p.title,valor: p.stock}));
 
+/*EXPORTAR*/
 
+const handleExportJSON = () => {
+  const blob = new Blob([JSON.stringify(filteredProducts, null, 2)] , {type: "application/json",})
+  const url = URL.createObjectURL(blob);
+  triggerDownload(url,"productos.json")
+};
+
+const triggerDownload = (url, filename) => {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+}
 
 
 
@@ -183,6 +202,18 @@ const dataStock = filteredProducts
              // se usaba para paginación
         }
         
+        <div className="mt-2">
+          <p>Sleccionar formato</p>
+
+          <select className="mt-2" onChange={(e) => setFormato(e.target.value)} value={formato}>
+            <option value="JSON">JSON</option>
+            <option value="CSV">CSV</option>
+            <option value="EXCEL">EXCEL</option>
+          </select>
+
+          <button onClick={handleExportJSON}>Exportar archivo</button>
+          
+        </div>
       
     </div>
   );

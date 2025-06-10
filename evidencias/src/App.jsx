@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState, useRef } from 'react';
 import { StatsPanel, Graficos } from './StatsPanel';
 import { ProductList } from "./ProductList";
+import * as XLSX from "xlsx";
 
 function App() {
 
@@ -98,25 +99,45 @@ const dataStock = filteredProducts
 
 /*EXPORTAR*/
 
-const handleExportJSON = () => {
-  const blob = new Blob([JSON.stringify(filteredProducts, null, 2)] , {type: "application/json",})
-  const url = URL.createObjectURL(blob);
-  triggerDownload(url,"productos.json")
+const handleExport = () => {
+  if (formato === "JSON") {
+    const blob = new Blob([JSON.stringify(filteredProducts, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    triggerDownload(url, "productos.json");
+  } else if (formato === "CSV") {
+    const header = Object.keys(filteredProducts[0]).join(",");
+    const filas = filteredProducts.map((p) => Object.values(p).join(","));
+    const csv = [header, ...filas].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    triggerDownload(url, "productos.csv");
+  } else if (formato === "EXCEL") {
+    const worksheet = XLSX.utils.json_to_sheet(filteredProducts);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Productos");
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+    const url = URL.createObjectURL(blob);
+    triggerDownload(url, "productos.xlsx");
+  }
 };
 
+// Esta función va afuera de handleExport
 const triggerDownload = (url, filename) => {
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
-
   document.body.appendChild(link);
-
   link.click();
-
   document.body.removeChild(link);
-}
-
-
+};
 
   return (
     <div ref={containerRef} className="app">
@@ -211,7 +232,7 @@ const triggerDownload = (url, filename) => {
             <option value="EXCEL">EXCEL</option>
           </select>
 
-          <button onClick={handleExportJSON}>Exportar archivo</button>
+          <button onClick={handleExport}>Exportar archivo</button>
           
         </div>
       

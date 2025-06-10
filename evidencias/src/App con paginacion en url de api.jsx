@@ -129,7 +129,6 @@ function App() {
     link.download = filename;
     document.body.appendChild(link);
     link.click();
-    alert("Archivo exportado correctamente.");
     document.body.removeChild(link);
   };
 

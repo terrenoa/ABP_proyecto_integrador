@@ -24,7 +24,7 @@ function App() {
 
   /*DATOS*/
   useEffect(() => {
-  axios.get(`https://dummyjson.com/products?limit=5`)
+  axios.get(`https://dummyjson.com/products?limit=0`)
     .then((res) => {
       setProducts(res.data.products);
     });
@@ -136,6 +136,7 @@ const triggerDownload = (url, filename) => {
   link.download = filename;
   document.body.appendChild(link);
   link.click();
+  window.alert("Archivo exportado exitosamente.");
   document.body.removeChild(link);
 };
 

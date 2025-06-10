@@ -1,31 +1,58 @@
-# Evidencia 1
-Fetch de datos de la api DummyJSON con axios y visualizacion en patalla haciendo uso de react y tailwindcss 
+# PROYECTO ABP
+
+Aplicación web interactiva que actúa como un explorador de productos, permitiendo no solo visualizar, filtrar y buscar productos, sino también obtener estadísticas y patrones a partir de sus datos.
 
 ## Instrucciones para ejecutar el proyecto
-1. clonar el repositorio con el comando git clone https://github.com/terrenoa/proyecto_integrador_ev1.got
-2. instalar las dependencias con el comando npm install
-3. ejecutar con el comando npm run dev
 
-## Imagen
-<img width="423" alt="ev1 pI" src="https://github.com/user-attachments/assets/24d8c253-a7f6-41d6-8cf9-0eef2a43f4cc" />
+1. Clonar el repositorio con el comando:  
+   git clone https://github.com/terrenoa/ABP_proyecto_integrador.git
 
-# Evidencia 2
-Se implemetó una barra de busqueda dinamca que actualiza los productos que se muestran y las estadisticas segun lo que se haya filtrado.
-Se separo el codigo en tres componentes:
-1. app.jsx: contiene toda la logica escencial para el funcionamiento.
-2. statspanel.jsx: recive las estadisticas definidas en app.jsx y las rederiza en pantalla.
-3. productlist.jsx: recibe los archivos filtrados en la barra de busqueda y los renderiza en pantalla.
+2. Instalar las dependencias:  
+   npm install
 
-### Estadisticas
-Se incluyeron las estadisticas:
-1. Cantidad de productos mostrados: total de productos filtrados que coinciden con la búsqueda.
-2. Precio más alto: precio del producto más caro en la lista filtrada.
-3. Precio más bajo: precio del producto más barato en la lista filtrada.
-4. Mayor descuento: porcentaje de descuento más alto entre los productos filtrados.
-5. Productos con título largo: cantidad de productos cuyo título tiene más de 20 caracteres.
-6. Promedio de puntaje: promedio de la puntuación (rating) de los productos filtrados, con dos decimales.
+3. Ejecutar el proyecto:  
+   npm run dev
 
-## Imagen
-![image](https://github.com/user-attachments/assets/c797468e-3c57-460b-a0aa-8849a8bfcc0e)
+## Tecnologías utilizadas
 
+- React: Para construir la interfaz de usuario de forma dinámica.
+- Tailwind CSS: Para aplicar estilos modernos y responsivos.
+- Axios: Para consumir la API de productos desde DummyJSON.
+- Recharts: Para representar visualizaciones gráficas.
+- XLSX (SheetJS): Para exportar datos en formato Excel.
+
+## Funcionalidades implementadas
+
+- Búsqueda por nombre de producto.
+- Filtro por categoría.
+- Ordenamiento por precio y rating (ascendente y descendente).
+- Estadísticas básicas (precio promedio, rating, productos con descuento, etc.).
+- Visualizaciones:
+  - Gráfico de barras: cantidad de productos por categoría.
+  - Gráfico de líneas: evolución simulada de precios.
+  - Pie chart: proporción de productos según stock.
+- Exportación de productos filtrados a JSON, CSV y Excel.
+- Modo oscuro y claro.
+- Componentes reutilizables y lógica separada por responsabilidad.
+
+## Conflicto: paginación y filtro por categoría desde la URL de la API
+
+Al comienzo del desarrollo, se optó por un enfoque que utilizaba los parámetros limit y skip directamente en la URL de la API para implementar paginación, combinándolo con el filtro por categoría también en la URL. Esto permitía que la API devolviera únicamente los productos de la categoría seleccionada, paginados según el valor de skip.
+
+Sin embargo, este enfoque resultó problemático cuando se quiso combinar con la lógica de búsqueda y ordenamiento en el frontend. Como la API solo devuelve un subconjunto limitado de productos (por ejemplo, los productos 21 al 30), es posible que ninguno de ellos coincida con la búsqueda del usuario, haciendo que la página aparezca vacía aunque sí existan coincidencias en otras páginas.
+
+Por ejemplo:
+https://dummyjson.com/products/category/smartphones?limit=10&skip=20
+
+Devuelve la tercera página de la categoría smartphones, pero si se busca un nombre específico que no esté en ese subconjunto, no se mostrará nada.
+
+## Decisión tomada
+
+Para evitar este problema, se cambió de enfoque y se implementó una lógica en la cual se cargan todos los productos (con un limit amplio) una sola vez y luego se aplican todos los filtros (búsqueda, categoría y orden) directamente en el frontend.
+
+Esta estrategia garantiza que siempre se tenga disponible el conjunto completo de productos sobre el cual aplicar los criterios del usuario y calcular estadísticas, sin depender de la estructura de la API ni limitar el análisis a una sola página de resultados.
+
+## versión con paginación y filtro en la URL
+
+Se deja en el repo un archivo txt donde se expone la logica inicial.
 
